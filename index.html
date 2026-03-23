@@ -733,12 +733,21 @@ let filteredData = [];
 let activeCategory = 'all';
 
 const CATEGORIES = [
-    { id: 'defi', label: 'DeFi', color: 'pill-blue', keywords: ['defi','yield','vault','staking','lending','borrow','collateral'] },
-    { id: 'swap', label: 'Exchange & DEX', color: 'pill-purple', keywords: ['swap','dex','amm','exchange','cex','order book','on-ramp'] },
-    { id: 'wallet', label: 'Wallet & Custody', color: 'pill-emerald', keywords: ['wallet','custody','multi-sig','chrome extension'] },
-    { id: 'infra', label: 'Infrastructure', color: 'pill-gray', keywords: ['infra','oracle','bridge','explorer','node','api','sdk','identity'] },
-    { id: 'rwa', label: 'RWA & Stablecoin', color: 'pill-orange', keywords: ['rwa','real estate','tokeniz','stablecoin','fiat'] },
-    { id: 'other', label: 'Other', color: 'pill-gray', keywords: [] }
+    { id:'swap',       label:'Swap / DEX',         color: 'pill-blue',    keywords:['swap','dex','amm','liquidity pool','trading','exchange','order book','atomic swap','rfq'] },
+    { id:'defi',       label:'DeFi',               color: 'pill-purple',  keywords:['defi','yield','vault','staking','collateral','synthetic','perpetual','futures','options','lending protocol'] },
+    { id:'wallet',     label:'Wallet',             color: 'pill-emerald', keywords:['wallet','custody','self-custody','multi-sig','multi signature','chrome extension'] },
+    { id:'oracle',     label:'Oracle',             color: 'pill-orange',  keywords:['oracle','price feed','data feed','price data','volatility surface'] },
+    { id:'bridge',     label:'Bridge',             color: 'pill-gray',    keywords:['bridge','cross-chain','cross chain','interoperab','cctp','relay','layerzero'] },
+    { id:'exchange',   label:'CEX / Exchange',     color: 'pill-purple',  keywords:['exchange gateway','cex','centralized exchange','okx','bingx','edx market','changelly','on/off-ramp','fiat'] },
+    { id:'explorer',   label:'Explorer',           color: 'pill-blue',    keywords:['explorer','analytics','dashboard','monitor','scan','beacon','network health','validator monitor'] },
+    { id:'lending',    label:'Lending',            color: 'pill-emerald', keywords:['lend','borrow','credit','loan','collateral','interest rate'] },
+    { id:'stablecoin', label:'Stablecoin',         color: 'pill-blue',    keywords:['stablecoin','stable coin','fdusd','synthetic dollar','stablebond','pegged'] },
+    { id:'rwa',        label:'RWA',                color: 'pill-orange',  keywords:['rwa','real world asset','tokeniz','real estate','equit','invoice','trade finance','bond'] },
+    { id:'prediction', label:'Prediction Market',  color: 'pill-purple',  keywords:['prediction','bet','outcome','binary question','event market'] },
+    { id:'payment',    label:'Payment',            color: 'pill-emerald', keywords:['payment','pay','billing','subscription','remittance','invoice'] },
+    { id:'gaming',     label:'Gaming / Social',    color: 'pill-orange',  keywords:['game','gaming','gamif','meme','coinflip','red packet','social','tap ','nft'] },
+    { id:'infra',      label:'Infrastructure',     color: 'pill-gray',    keywords:['infra','validator','node ','api ','sdk','consent','compliance','identity','ai ','rng','random'] },
+    { id:'other',      label:'Other',              color: 'pill-gray',    keywords:[] }
 ];
 
 const GRADIENTS = [
@@ -786,7 +795,7 @@ function renderGrid() {
     empty.style.display = 'none';
 
     grid.innerHTML = filteredData.map((app, index) => {
-        const primaryCat = CATEGORIES.find(c => app._cats.includes(c.id));
+        const primaryCat = CATEGORIES.find(c => app._cats.includes(c.id)) || CATEGORIES[CATEGORIES.length - 1];
         const urlDisplay = app.app_url 
             ? `<a href="${app.app_url}" class="card-link" onclick="event.stopPropagation()" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> ${cleanUrl(app.app_url)}</a>` 
             : `<span class="no-link">No website provided</span>`;
@@ -887,7 +896,7 @@ document.getElementById('sortSelect').addEventListener('change', filterAndSort);
 
 function openModal(index) {
     const app = filteredData[index];
-    const cat = CATEGORIES.find(c => app._cats.includes(c.id));
+    const cat = CATEGORIES.find(c => app._cats.includes(c.id)) || CATEGORIES[CATEGORIES.length - 1];
     
     const links = [];
     if (app.app_url) links.push(app.app_url);

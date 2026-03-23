@@ -136,7 +136,7 @@ def parse_topics_from_html(html_content):
         # Get summary of what app does
         summary_match = re.search(r'Provide a summary of what your application will do:\s*(.+?)(?:\s*Describe the expected users)', description_text, re.DOTALL)
         if summary_match:
-            summary = summary_match.group(1).strip()[:300]
+            summary = summary_match.group(1).strip()
         
         # Entry ID
         entry_id = ""

@@ -146,7 +146,7 @@ def extract_app_info(title, desc):
     summary = ""
     sum_match = re.search(r'Provide a summary of what your application will do:\s*(.+?)(?:\s*Describe the expected users)', desc, re.DOTALL)
     if sum_match:
-        summary = sum_match.group(1).strip()[:300]
+        summary = sum_match.group(1).strip()
     
     # Entry ID
     entry_id = ""

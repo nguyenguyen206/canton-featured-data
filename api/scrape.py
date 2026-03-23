@@ -148,6 +148,36 @@ def extract_app_info(title, desc):
     if sum_match:
         summary = sum_match.group(1).strip()
     
+    # Expected users
+    expected_users = ""
+    eu_match = re.search(r'Describe the expected users[^.]*?[.:]\s*(.+?)(?:\s*How will your app)', desc, re.DOTALL)
+    if eu_match:
+        expected_users = eu_match.group(1).strip()
+    
+    # Reward activities (IMPORTANT)
+    reward_activities = ""
+    ra_match = re.search(r'Describe the activities that your application will earn application rewards from[.:]?\s*(.+?)(?:\s*Does this activity use Canton Coin)', desc, re.DOTALL)
+    if ra_match:
+        reward_activities = ra_match.group(1).strip()
+    
+    # Canton Coin or Activity Markers (IMPORTANT)
+    reward_type = ""
+    rt_match = re.search(r'Does this activity use Canton Coin or Activity Markers to generate rewards\??\s*(.+?)(?:\s*On a per user)', desc, re.DOTALL)
+    if rt_match:
+        reward_type = rt_match.group(1).strip()
+    
+    # Daily transactions per user
+    daily_transactions = ""
+    dt_match = re.search(r'On a per user basis,?\s*what is your expected daily number of transactions[?]?\s*(.+?)(?:\s*Under what conditions)', desc, re.DOTALL)
+    if dt_match:
+        daily_transactions = dt_match.group(1).strip()
+    
+    # Launch date
+    launch_date = ""
+    ld_match = re.search(r'What is your anticipated launch date on MainNet\??\s*(.+?)(?:\s*Who will be your)', desc, re.DOTALL)
+    if ld_match:
+        launch_date = ld_match.group(1).strip()
+    
     # Entry ID
     entry_id = ""
     eid_match = re.search(r'Entry ID:\s*(\d+)', desc)
@@ -165,6 +195,11 @@ def extract_app_info(title, desc):
         "institution_url": institution_url,
         "product_website": app_url,
         "summary": summary,
+        "expected_users": expected_users,
+        "reward_activities": reward_activities,
+        "reward_type": reward_type,
+        "daily_transactions": daily_transactions,
+        "launch_date": launch_date,
         "title": title,
     }
 

@@ -1,0 +1,44 @@
+﻿TITLE: Featured App Request: Benleo Group - Bitleo Wallet
+RAW TEXT LENGTH: 4096
+
+[   63] Entry ID:
+python : Traceback (most 
+recent call last):
+At line:1 char:1
++ python check_fields.py 
+2>&1 | Out-File -Encoding 
+utf8 check_fields_re ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Traceba  
+  ck (most recent call las   
+ t)::String) [], RemoteEx    
+ception
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+  File "C:\Users\NguyenDinhNg
+uyen\Folder local 
+use\Download D\Code py\Sendap
+p\featured_apps\check_fields.
+py", line 76, in <module>
+    print(f"        \u2192 
+{snippet[:150]}...")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
+  File "C:\Users\NguyenDinhNg
+uyen\AppData\Local\Python\pyt
+honcore-3.14-64\Lib\encodings
+\cp1252.py", line 19, in 
+encode
+    return codecs.charmap_enc
+ode(input,self.errors,encodin
+g_table)[0]
+           ~~~~~~~~~~~~~~~~~~
+~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't encode 
+character '\u2192' in 
+position 8: character maps 
+to <undefined>

@@ -1024,14 +1024,30 @@ function openModal(idx) {
             <div class="card-icon" style="background:${getIconColor(app.app_name)};width:52px;height:52px;font-size:22px;border-radius:14px">${getInitials(app.app_name)}</div>
             <div>
                 <h2>${app.app_name}</h2>
-                <div class="modal-company">${app.project_name} ${app.entry_id ? `• Entry #${app.entry_id}` : ''}</div>
+                <div class="modal-company">${app.project_name} ${app.entry_id ? `• Entry #${app.entry_id}` : ''}${app.launch_date ? ` • 🚀 ${app.launch_date}` : ''}</div>
             </div>
         </div>
         <div style="margin-bottom:16px">${tagsHtml}</div>
         ${urlsHtml}
         ${app.summary ? `<div class="modal-section">
-            <div class="modal-section-title">Description</div>
+            <div class="modal-section-title">📋 Description</div>
             <div class="modal-section-content">${app.summary}</div>
+        </div>` : ''}
+        ${app.reward_activities ? `<div class="modal-section" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div class="modal-section-title" style="color:#fbbf24">⚡ Reward Activities</div>
+            <div class="modal-section-content">${app.reward_activities}</div>
+        </div>` : ''}
+        ${app.reward_type ? `<div class="modal-section" style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div class="modal-section-title" style="color:#818cf8">🪙 Canton Coin or Activity Markers?</div>
+            <div class="modal-section-content">${app.reward_type}</div>
+        </div>` : ''}
+        ${app.daily_transactions ? `<div class="modal-section">
+            <div class="modal-section-title">📊 Daily Transactions per User</div>
+            <div class="modal-section-content">${app.daily_transactions}</div>
+        </div>` : ''}
+        ${app.expected_users ? `<div class="modal-section">
+            <div class="modal-section-title">👥 Expected Users</div>
+            <div class="modal-section-content">${app.expected_users}</div>
         </div>` : ''}
     `;
 

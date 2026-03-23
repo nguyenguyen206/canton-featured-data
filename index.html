@@ -5,38 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canton Network — Featured Apps Explorer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
         :root {
-            --bg-primary: #0a0b0f;
-            --bg-secondary: #12131a;
-            --bg-card: rgba(22, 24, 35, 0.7);
-            --bg-card-hover: rgba(30, 33, 48, 0.85);
-            --border-color: rgba(255, 255, 255, 0.06);
-            --border-hover: rgba(120, 130, 255, 0.3);
-            --text-primary: #e8eaed;
-            --text-secondary: #9aa0b4;
-            --text-muted: #5a6078;
-            --accent-blue: #6366f1;
-            --accent-purple: #8b5cf6;
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-card: rgba(30, 41, 59, 0.6);
+            --bg-card-hover: rgba(51, 65, 85, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(245, 158, 11, 0.4);
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --text-muted: #64748B;
+            --accent-blue: #F59E0B;
+            --accent-purple: #8B5CF6;
             --accent-cyan: #06b6d4;
             --accent-emerald: #10b981;
-            --accent-amber: #f59e0b;
+            --accent-amber: #F59E0B;
             --accent-rose: #f43f5e;
-            --accent-orange: #f97316;
-            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-            --gradient-2: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --accent-orange: #FBBF24;
+            --gradient-1: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #F97316 100%);
+            --gradient-2: linear-gradient(135deg, #8B5CF6 0%, #6366f1 100%);
             --gradient-3: linear-gradient(135deg, #f43f5e 0%, #f97316 100%);
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
-            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 40px rgba(245, 158, 11, 0.12);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Exo 2', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -113,14 +117,16 @@
             50% { opacity: 0.5; transform: scale(1.3); }
         }
         .hero h1 {
+            font-family: 'Orbitron', sans-serif;
             font-size: clamp(28px, 4vw, 48px);
-            font-weight: 800;
-            background: linear-gradient(135deg, #e8eaed 0%, #a78bfa 50%, #6366f1 100%);
+            font-weight: 700;
+            background: linear-gradient(135deg, #F8FAFC 0%, #F59E0B 50%, #FBBF24 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.15;
             margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
         .hero p {
             font-size: 16px;
@@ -324,7 +330,7 @@
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            cursor: default;
+            cursor: pointer;
             animation: cardIn 0.4s ease-out both;
         }
         @keyframes cardIn {
@@ -1030,23 +1036,23 @@ function openModal(idx) {
         <div style="margin-bottom:16px">${tagsHtml}</div>
         ${urlsHtml}
         ${app.summary ? `<div class="modal-section">
-            <div class="modal-section-title">📋 Description</div>
+            <div class="modal-section-title">DESCRIPTION</div>
             <div class="modal-section-content">${app.summary}</div>
         </div>` : ''}
         ${app.reward_activities ? `<div class="modal-section" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:16px;margin-bottom:16px">
-            <div class="modal-section-title" style="color:#fbbf24">⚡ Reward Activities</div>
+            <div class="modal-section-title" style="color:#fbbf24">REWARD ACTIVITIES</div>
             <div class="modal-section-content">${app.reward_activities}</div>
         </div>` : ''}
-        ${app.reward_type ? `<div class="modal-section" style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:12px;padding:16px;margin-bottom:16px">
-            <div class="modal-section-title" style="color:#818cf8">🪙 Canton Coin or Activity Markers?</div>
+        ${app.reward_type ? `<div class="modal-section" style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div class="modal-section-title" style="color:#a78bfa">CANTON COIN / ACTIVITY MARKERS</div>
             <div class="modal-section-content">${app.reward_type}</div>
         </div>` : ''}
         ${app.daily_transactions ? `<div class="modal-section">
-            <div class="modal-section-title">📊 Daily Transactions per User</div>
+            <div class="modal-section-title">DAILY TRANSACTIONS</div>
             <div class="modal-section-content">${app.daily_transactions}</div>
         </div>` : ''}
         ${app.expected_users ? `<div class="modal-section">
-            <div class="modal-section-title">👥 Expected Users</div>
+            <div class="modal-section-title">EXPECTED USERS</div>
             <div class="modal-section-content">${app.expected_users}</div>
         </div>` : ''}
     `;

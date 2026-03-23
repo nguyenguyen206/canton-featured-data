@@ -689,7 +689,7 @@
     <div class="container">
         <!-- HERO -->
         <div class="hero">
-            <div class="hero-badge"><span class="dot"></span> AUTO-UPDATED DAILY</div>
+            <div class="hero-badge"><span class="dot"></span> LIVE DATA</div>
             <h1>Canton Network<br>Featured Apps Explorer</h1>
             <p>Comprehensive directory of all Featured App Requests submitted to the Canton Network tokenomics forum.</p>
         </div>
@@ -746,7 +746,14 @@
         </div>
 
         <!-- GRID -->
-        <div class="grid" id="appGrid"></div>
+        <div class="grid" id="appGrid">
+            <div class="empty-state" id="loadingState">
+                <div style="width:40px;height:40px;border:3px solid rgba(99,102,241,0.2);border-top-color:#6366f1;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+                <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+                <h3>Loading live data...</h3>
+                <p>Fetching latest Featured App Requests from Canton Network</p>
+            </div>
+        </div>
 
         <!-- EMPTY STATE -->
         <div class="empty-state" id="emptyState" style="display:none">
@@ -1081,25 +1088,56 @@ window.addEventListener('scroll', () => {
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('sortSelect').addEventListener('change', applyFilters);
 
-// Load data
-fetch('featured_apps.json')
-    .then(r => r.json())
+// Load data: try live API first, fallback to static JSON
+function loadData(apps, source, updatedAt) {
+    APP_DATA = apps.map(app => ({
+        ...app,
+        _categories: classifyApp(app),
+    }));
+    updateStats();
+    applyFilters();
+    // Show data source & update time
+    const badge = document.querySelector('.hero-badge');
+    const lastUp = document.getElementById('lastUpdated');
+    if (source === 'live') {
+        badge.innerHTML = '<span class="dot"></span> LIVE DATA';
+        badge.style.borderColor = 'rgba(16,185,129,0.3)';
+        badge.style.color = '#10b981';
+        badge.style.background = 'rgba(16,185,129,0.1)';
+    } else {
+        badge.innerHTML = '<span class="dot"></span> CACHED DATA';
+    }
+    if (updatedAt) {
+        const d = new Date(updatedAt);
+        lastUp.textContent = `Last updated: ${d.toLocaleString()}`;
+    } else {
+        lastUp.textContent = `Data loaded from ${source} source`;
+    }
+}
+
+// Try live API first
+fetch('/api/scrape')
+    .then(r => { if (!r.ok) throw new Error(`API ${r.status}`); return r.json(); })
     .then(data => {
-        APP_DATA = data.map(app => ({
-            ...app,
-            _categories: classifyApp(app),
-        }));
-        updateStats();
-        applyFilters();
+        if (data.apps && data.apps.length > 0) {
+            loadData(data.apps, 'live', data.updated_at);
+        } else {
+            throw new Error('Empty API response');
+        }
     })
-    .catch(err => {
-        console.error('Error loading data:', err);
-        document.getElementById('appGrid').innerHTML = `
-            <div class="empty-state">
-                <h3>Error loading data</h3>
-                <p>Make sure featured_apps.json is in the same directory and you're serving this file via a local server.</p>
-                <p style="margin-top:8px;font-family:monospace;font-size:12px;color:var(--accent-rose)">${err.message}</p>
-            </div>`;
+    .catch(apiErr => {
+        console.warn('Live API unavailable, falling back to static JSON:', apiErr.message);
+        fetch('featured_apps.json')
+            .then(r => r.json())
+            .then(data => loadData(data, 'static', null))
+            .catch(err => {
+                document.getElementById('appGrid').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error loading data</h3>
+                        <p>Could not load from API or static file.</p>
+                        <p style="margin-top:8px;font-family:monospace;font-size:12px;color:var(--accent-rose)">${err.message}</p>
+                    </div>`;
+            });
     });
 </script>
 </body>

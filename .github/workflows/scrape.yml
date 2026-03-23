@@ -1,0 +1,44 @@
+name: Scrape Canton Featured Apps
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC (13:00 Vietnam time)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run scraper
+        run: python scrape_featured_apps.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet featured_apps.json || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit & Push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add featured_apps.json featured_apps.csv
+          git commit -m "chore: auto-update featured apps data ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+          git push

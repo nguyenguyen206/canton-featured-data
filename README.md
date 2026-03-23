@@ -1,5 +1,9 @@
 # 🏛️ Canton Network — Featured Apps Directory
 
+> 🌐 **Live Dashboard**: [nguyenguyen206.github.io/canton-featured-data/canton_apps_viewer.html](https://nguyenguyen206.github.io/canton-featured-data/canton_apps_viewer.html)
+> 
+> 🔄 **Auto-updated daily** via GitHub Actions
+
 A comprehensive directory of all **Featured App Requests** submitted to the Canton Network tokenomics forum.
 
 ## 📊 Overview
@@ -67,3 +71,4 @@ python scrape_featured_apps.py
 ## 📝 License
 
 Data sourced from publicly available Canton Network forum submissions.
+

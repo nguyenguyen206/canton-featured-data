@@ -1019,21 +1019,22 @@ function exportCSV() {
     link.click();
 }
 
-// Fetch Logic
-fetch('/api/scrape')
-    .then(res => { if (!res.ok) throw new Error('Network response was not ok'); return res.json(); })
-    .then(data => {
-        if (data.apps && data.apps.length > 0) init(data.apps, 'live', data.updated_at);
-        else throw new Error('No apps found in live API');
+// Fetch Logic - Directly load from JSON since this is a static site
+fetch('featured_apps.json')
+    .then(res => { 
+        if (!res.ok) throw new Error('File not found or network error'); 
+        return res.json(); 
     })
-    .catch(err => {
-        console.log('Falling back to static JSON', err);
-        fetch('featured_apps.json')
-            .then(res => res.json())
-            .then(data => init(data, 'static', null))
-            .catch(e => {
-                document.getElementById('appGrid').innerHTML = `<div class="empty-state"><h3>Failed to load data</h3><p>${e.message}</p></div>`;
-            });
+    .then(data => {
+        if (data && data.length > 0) init(data, 'static', null);
+        else throw new Error('Data file is currently empty.');
+    })
+    .catch(e => {
+        console.error('Fetch error:', e);
+        document.getElementById('appGrid').innerHTML = `<div class="empty-state"><h3>Failed to load data</h3><p>${e.message}</p></div>`;
+        document.getElementById('dataStatusBadge').innerHTML = '<span class="dot" style="background:#ef4444; animation:none; box-shadow:none;"></span> Data Unavailable';
+        document.getElementById('dataStatusBadge').style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        document.getElementById('dataStatusBadge').style.background = 'rgba(239, 68, 68, 0.05)';
     });
 </script>
 </body>

@@ -42,8 +42,16 @@ def get_topics_page(page_num=1, after_id=None):
     else:
         url = f"https://lists.sync.global/g/tokenomics/topics?page={page_num}&after={after_id}&sidebar=true"
     
-    resp = session.get(url, timeout=30)
-    return resp.text
+    for attempt in range(3):
+        try:
+            resp = session.get(url, timeout=30)
+            return resp.text
+        except requests.exceptions.RequestException as e:
+            print(f"  [Error] Request failed on attempt {attempt+1}: {e}")
+            time.sleep(5)
+            
+    print("  [Error] Failed to fetch page after 3 retries.")
+    return ""
 
 
 def extract_field(text, field_name):
@@ -226,6 +234,7 @@ def main():
         after_id = None
         total_count = 0
         
+        cycle_success = False
         while True:
             print(f"\n[Page {page_num}] Fetching topics...")
             html = get_topics_page(page_num, after_id)
@@ -250,12 +259,16 @@ def main():
             if next_page and next_after:
                 page_num = next_page
                 after_id = next_after
-                time.sleep(0.5)  # Be polite
+                time.sleep(2)  # Increased sleep to prevent rate limiting connection errors
             else:
                 print("\n  No more pages.")
+                cycle_success = True
                 break
         
-        if not all_topics:
+        if not cycle_success:
+            print("\n  WARNING: Scrape cycle did not finish successfully.")
+            print("  Existing data files will NOT be overwritten to prevent data loss.")
+        elif not all_topics:
             print("\n  WARNING: No data collected in this cycle. Session cookie may have expired.")
             print("  Existing data files will NOT be overwritten.")
         else:

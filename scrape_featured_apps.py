@@ -11,6 +11,7 @@ import re
 import json
 import time
 import csv
+import datetime
 from bs4 import BeautifulSoup
 
 COOKIE_VAL = "v1:1280x720|Win32|Asia/Saigon|12|8:1774177567:05fa9fd0f83f2e68856b256a0d80076856ab5270ecf3e0c6fa2c9890f8197d9b"
@@ -216,77 +217,93 @@ def main():
     print("  Canton Featured App Requests Scraper")
     print("=" * 70)
     
-    all_topics = []
-    page_num = 1
-    after_id = None
-    total_count = 0
-    
     while True:
-        print(f"\n[Page {page_num}] Fetching topics...")
-        html = get_topics_page(page_num, after_id)
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"\n[{current_time}] Starting new scrape cycle...")
         
-        if not html or len(html) < 500:
-            print("  Empty response, stopping.")
-            break
+        all_topics = []
+        page_num = 1
+        after_id = None
+        total_count = 0
         
-        topics, next_page, next_after, total = parse_topics_from_html(html)
+        while True:
+            print(f"\n[Page {page_num}] Fetching topics...")
+            html = get_topics_page(page_num, after_id)
+            
+            if not html or len(html) < 500:
+                print("  Empty response or session expired, stopping.")
+                break
+            
+            topics, next_page, next_after, total = parse_topics_from_html(html)
+            
+            if total > 0 and total_count == 0:
+                total_count = total
+                print(f"  Total topics on forum: {total_count}")
+            
+            print(f"  Found {len(topics)} Featured App topics on this page")
+            
+            for t in topics:
+                print(f"    [{t['entry_id']:>3}] {t['project_name'][:30]:<30} | {t['app_name'][:25]:<25} | {t['app_url'][:40]}")
+            
+            all_topics.extend(topics)
+            
+            if next_page and next_after:
+                page_num = next_page
+                after_id = next_after
+                time.sleep(0.5)  # Be polite
+            else:
+                print("\n  No more pages.")
+                break
         
-        if total > 0 and total_count == 0:
-            total_count = total
-            print(f"  Total topics on forum: {total_count}")
-        
-        print(f"  Found {len(topics)} Featured App topics on this page")
-        
-        for t in topics:
-            print(f"    [{t['entry_id']:>3}] {t['project_name'][:30]:<30} | {t['app_name'][:25]:<25} | {t['app_url'][:40]}")
-        
-        all_topics.extend(topics)
-        
-        if next_page and next_after:
-            page_num = next_page
-            after_id = next_after
-            time.sleep(0.5)  # Be polite
+        if not all_topics:
+            print("\n  WARNING: No data collected in this cycle. Session cookie may have expired.")
+            print("  Existing data files will NOT be overwritten.")
         else:
-            print("\n  No more pages.")
-            break
-    
-    # Deduplicate by topic_id
-    seen = set()
-    unique = []
-    for t in all_topics:
-        if t["topic_id"] not in seen:
-            seen.add(t["topic_id"])
-            unique.append(t)
-    
-    print(f"\n{'=' * 70}")
-    print(f"  Total unique Featured App Requests: {len(unique)}")
-    print(f"{'=' * 70}")
-    
-    # Save as JSON
-    with open("featured_apps.json", "w", encoding="utf-8") as f:
-        json.dump(unique, f, indent=2, ensure_ascii=False)
-    print(f"\n  Saved to featured_apps.json")
-    
-    # Save as CSV
-    fieldnames = ["entry_id", "project_name", "app_name", "app_url", "institution_url", "product_website", "summary", "title", "topic_id"]
-    with open("featured_apps.csv", "w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for r in unique:
-            writer.writerow({k: r.get(k, "") for k in fieldnames})
-    print(f"  Saved to featured_apps.csv")
-    
-    # Print summary table
-    print(f"\n{'#':<4} {'Entry':<6} {'Project':<30} {'App Name':<25} {'URL':<45}")
-    print("-" * 115)
-    for i, r in enumerate(unique):
-        proj = r.get("project_name", "")[:29]
-        app = r.get("app_name", "")[:24]
-        url = r.get("app_url", "")[:44]
-        eid = r.get("entry_id", "")
-        print(f"{i+1:<4} {eid:<6} {proj:<30} {app:<25} {url:<45}")
-    
-    print(f"\nTotal: {len(unique)} Featured App Requests")
+            # Deduplicate by topic_id
+            seen = set()
+            unique = []
+            for t in all_topics:
+                if t["topic_id"] not in seen:
+                    seen.add(t["topic_id"])
+                    unique.append(t)
+            
+            print(f"\n{'=' * 70}")
+            print(f"  Total unique Featured App Requests: {len(unique)}")
+            print(f"{'=' * 70}")
+            
+            # Save as JSON
+            with open("featured_apps.json", "w", encoding="utf-8") as f:
+                json.dump(unique, f, indent=2, ensure_ascii=False)
+            print(f"\n  Saved to featured_apps.json")
+            
+            # Save as CSV with updated field names for recently added fields
+            fieldnames = [
+                "entry_id", "project_name", "app_name", "app_url", "institution_url", 
+                "product_website", "summary", "expected_users", "reward_activities", 
+                "reward_type", "daily_transactions", "launch_date", "title", "topic_id"
+            ]
+            
+            with open("featured_apps.csv", "w", encoding="utf-8-sig", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                for r in unique:
+                    writer.writerow({k: r.get(k, "") for k in fieldnames})
+            print(f"  Saved to featured_apps.csv")
+            
+            # Print summary table
+            print(f"\n{'#':<4} {'Entry':<6} {'Project':<30} {'App Name':<25} {'URL':<45}")
+            print("-" * 115)
+            for i, r in enumerate(unique):
+                proj = r.get("project_name", "")[:29]
+                app = r.get("app_name", "")[:24]
+                url = r.get("app_url", "")[:44]
+                eid = r.get("entry_id", "")
+                print(f"{i+1:<4} {eid:<6} {proj:<30} {app:<25} {url:<45}")
+            
+            print(f"\nTotal: {len(unique)} Featured App Requests")
+            
+        print("\nSleeping for 1 hour before next refresh...")
+        time.sleep(3600)
 
 
 if __name__ == "__main__":

@@ -2,8 +2,13 @@ name: Scrape Canton Featured Apps
 
 on:
   schedule:
-    # Run hourly
+    # Run every hour at minute 0
     - cron: '0 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/scrape.yml'
+      - 'scrape_featured_apps.py'
   workflow_dispatch: # Allow manual trigger
 
 permissions:

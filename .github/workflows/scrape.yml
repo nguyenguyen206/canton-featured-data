@@ -16,18 +16,17 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# Đã xóa phần env: FORCE_JAVASCRIPT_ACTIONS_TO_NODE24 vì không còn cần thiết
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6 # Nâng cấp từ v4 lên v6
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6 # Nâng cấp từ v5 lên v6
         with:
           python-version: '3.12'
 

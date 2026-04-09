@@ -17,8 +17,7 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# Đã xóa phần env: FORCE_JAVASCRIPT_ACTIONS_TO_NODE24
 
 jobs:
   deploy:
@@ -32,16 +31,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6 # Nâng cấp lên v6
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v5 # Có thể giữ nguyên v5 hoặc nâng lên bản mới nhất nếu có
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4 # Nâng cấp từ v3 lên v4 (hoặc mới hơn)
         with:
           path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5 # Nâng cấp từ v4 lên v5 (hoặc mới hơn)
